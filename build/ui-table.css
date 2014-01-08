@@ -109,11 +109,11 @@
 }
 
 .cssTableRow:nth-child(odd) {
-  background-color: #e8e8e8;
+  background-color: #eaeaea;
 }
 
 .cssTableRow:nth-child(even) {
-  background-color: #d8d8d8;
+  background-color: #f2f2f2;
 }
 
 .uiScrollbarOuter {
@@ -127,33 +127,12 @@
 }
 
 #headRow {
-  background: #f8f8f8;
-  /* Old browsers */
-
-  background: -moz-linear-gradient(top, #f8f8f8 0%, #d8d8d8 100%);
-  /* FF3.6+ */
-
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f8f8f8), color-stop(100%, #d8d8d8));
-  /* Chrome,Safari4+ */
-
-  background: -webkit-linear-gradient(top, #f8f8f8 0%, #d8d8d8 100%);
-  /* Chrome10+,Safari5.1+ */
-
-  background: -o-linear-gradient(top, #f8f8f8 0%, #d8d8d8 100%);
-  /* Opera 11.10+ */
-
-  background: -ms-linear-gradient(top, #f8f8f8 0%, #d8d8d8 100%);
-  /* IE10+ */
-
-  background: linear-gradient(to bottom, #f8f8f8 0%, #d8d8d8 100%);
-  /* W3C */
-
+  background-color: #6e6e6e;
 }
 
 #headRow .cssTableCell {
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f8f8f8', endColorstr='#d8d8d8', GradientType=0);
-  /* IE6-9 */
-
+  font-weight: 700;
+  color: #fff;
 }
 
 #headRow .cssTableRow {
@@ -163,6 +142,11 @@
 #headRow .cssTableCellContent {
   text-align: center;
   cursor: pointer;
+  height: 30px;
+}
+
+#measureHeadCells .cssTableCellContent {
+  height: 30px;
 }
 
 .cssTableCellContent.reorder {
@@ -184,4 +168,12 @@
 
 .cssTableColumnSort {
   text-shadow: 1px 1px 1px #ffffff;
+}
+
+.hScrollbarHeight {
+  height: 12px;
+}
+
+.vScrollbarWidth {
+  width: 12px;
 }

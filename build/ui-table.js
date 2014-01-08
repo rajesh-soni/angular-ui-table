@@ -108,7 +108,7 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                         // Create the column definition html.
                         var columnHtml = '<div class="cssTableColumn" style="width:' + columnScope.width + 'px;"></div>';
                         // Get the column template.
-                        var headTemplate = (columnScope.column.headTemplate && columnScope.column.headTemplate.length > 0) ? columnScope.column.headTemplate : '<span ng-bind="column.title"></span>\n<span class="cssTableColumnSort">\n    <i ui-if="column.sort == \'asc\'" class="icon-sort-up"></i>\n    <i ui-if="column.sort == \'desc\'" class="icon-sort-down"></i>\n    <span ui-if="column.sortOrder > 0" ng-bind="column.sortOrder"\n          style="font-size: x-small; vertical-align: top;"></span>\n</span>\n<span class="cssTableColumnTools">\n    <span ui-if="column.fixed == \'left\'" ui-table-column-fix="scroll"><i class="icon-signout"></i></span>\n    <span ui-if="column.fixed == \'right\'" ui-table-column-fix="scroll"><i class="icon-signout icon-flip-horizontal"></i></span>\n    <span ui-if="column.fixed != \'left\'" ui-table-column-fix="left"><i\n            class="icon-signin icon-flip-horizontal"></i></span>\n    <span ui-if="column.fixed != \'right\'" ui-table-column-fix="right"><i class="icon-signin"></i></span>\n    <span ui-table-column-reorder style="cursor:move;"><i class="icon-sort icon-rotate-90"></i></span>\n</span>\n<div ui-table-column-resize class="cssTableColumnResize"></div>';
+                        var headTemplate = (columnScope.column.headTemplate && columnScope.column.headTemplate.length > 0) ? columnScope.column.headTemplate : '<span ng-bind="column.title"></span>\n<span class="cssTableColumnSort">\n    <i ui-if="column.sort == \'asc\'" class="icon-sort-up"></i>\n    <i ui-if="column.sort == \'desc\'" class="icon-sort-down"></i>\n    <span ui-if="column.sortOrder > 0" ng-bind="column.sortOrder"\n          style="font-size: x-small; vertical-align: top;"></span>\n</span>\n<span class="cssTableColumnTools"></span>\n<div ui-table-column-resize class="cssTableColumnResize"></div>';
                         // Create the column cell html.
                         var cellHtml = '<div class="cssTableCell"><div class="cssTableCellContent" style="width:' + columnScope.width + 'px;">' + headTemplate + '</div></div>';
                         // Create the elements.
@@ -569,20 +569,26 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                 // Update the table layout.
                 controller.updateLayout = function () {
                     var fixedWidth = 0;
+                    var hScrollContainerHeight = $scope.horizontalScrollContainer.height();
+                    var vScrollContainerWidth = $scope.verticalScrollContainer.width();
+                    var scrollableHeight = $scope.linkElement.height() - $scope.scrollHeadContainer.height() - hScrollContainerHeight;
+
                     if ($scope.numberOfColumnsFixedLeft > 0) {
                         fixedWidth += $scope.fixedLeftHeadCells.width();
-                        $scope.fixedLeftBodyContainer.height($scope.linkElement.height() - $scope.scrollHeadContainer.height() - 16);
+                        $scope.fixedLeftBodyContainer.height(scrollableHeight);
                     }
                     if ($scope.numberOfColumnsFixedRight > 0) {
                         fixedWidth += $scope.fixedRightHeadCells.width();
-                        $scope.fixedRightBodyContainer.height($scope.linkElement.height() - $scope.scrollHeadContainer.height() - 16);
+                        $scope.fixedRightBodyContainer.height(scrollableHeight);
                     }
-                    $scope.scrollHeadContainer.width($scope.linkElement.width() - fixedWidth - 16);
-                    $scope.scrollBodyContainer.width($scope.linkElement.width() - fixedWidth - 16);
-                    $scope.scrollBodyContainer.height($scope.linkElement.height() - $scope.scrollHeadContainer.height() - 16);
-                    $scope.vScrollbarOptions.size = $scope.linkElement.height() - $scope.scrollHeadContainer.height() - 16;
-                    $scope.hScrollbarOptions.size = $scope.linkElement.width() - fixedWidth - 16;
-                    $scope.hScrollbarOptions.page = $scope.linkElement.width() - fixedWidth - 16;
+
+                    var scrollableWidth = $scope.linkElement.width() - fixedWidth - vScrollContainerWidth;
+                    $scope.scrollHeadContainer.width(scrollableWidth);
+                    $scope.scrollBodyContainer.width(scrollableWidth);
+                    $scope.scrollBodyContainer.height(scrollableHeight);
+                    $scope.vScrollbarOptions.size = scrollableHeight;
+                    $scope.hScrollbarOptions.size = scrollableWidth;
+                    $scope.hScrollbarOptions.page = scrollableWidth;
                     $scope.hScrollbarOptions.total = $scope.scrollHeadTable.width();
                     var newPosition = $scope.hScrollbarOptions.position;
                     if (newPosition + $scope.hScrollbarOptions.page > $scope.hScrollbarOptions.total) {
@@ -644,7 +650,7 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                     controller: 'uiTableController',
                     restrict: 'C',
                     scope: {uiTableOptions: '='},
-                    template: '<div class="cssTable cssMeasure">\n    <div class="cssTableColumnGroup" id="measureHeadColumns">\n        <!-- each col in cols -->\n    </div>\n    <div class="cssTableRowGroup" id="measureHeadCells">\n        <!-- each row in rows -->\n    </div>\n</div>\n<div class="cssTable cssMeasure">\n    <div class="cssTableColumnGroup" id="measureBodyColumns">\n        <!-- each col in cols -->\n    </div>\n    <div class="cssTableRowGroup" id="measureBodyRows">\n        <!-- each row in rows -->\n    </div>\n</div>\n<div class="cssTable" msd-wheel="onMouseWheel($event, $delta, $deltaX, $deltaY)">\n    <div class="cssTableRowGroup">\n        <div class="cssTableRow" id="headRow">\n            <div class="cssTableCell" ng-show="numberOfColumnsFixedLeft > 0">\n                <!-- fixed left headers -->\n                <div class="cssTable">\n                    <div class="cssTableColumnGroup" id="fixedLeftHeadColumns">\n                        <!-- each col in fixedCols -->\n                    </div>\n                    <div class="cssTableRowGroup">\n                        <div class="cssTableRow" id="fixedLeftHeadCells">\n                            <!-- each col in fixedCols -->\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class="cssTableCell">\n                <!-- scroll headers -->\n                <div class="cssScrollContainer" id="scrollHeadContainer">\n                    <div class="cssTable" id="scrollHeadTable">\n                        <div class="cssTableColumnGroup" id="scrollHeadColumns">\n                            <!-- each col in scrollCols -->\n                        </div>\n                        <div class="cssTableRowGroup">\n                            <div class="cssTableRow" id="scrollHeadCells">\n                                <!-- each col in scrollCols -->\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class="cssTableCell" ng-show="numberOfColumnsFixedRight > 0">\n                <!-- fixed right headers -->\n                <div class="cssTable">\n                    <div class="cssTableColumnGroup" id="fixedRightHeadColumns">\n                        <!-- each col in fixedCols -->\n                    </div>\n                    <div class="cssTableRowGroup">\n                        <div class="cssTableRow" id="fixedRightHeadCells">\n                            <!-- each col in fixedCols -->\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class="cssTableCell">\n            </div>\n        </div>\n        <div class="cssTableRow">\n            <div class="cssTableCell" ng-show="numberOfColumnsFixedLeft > 0">\n                <!-- fixed left body -->\n                <div class="cssFixedContainer" id="fixedLeftBodyContainer">\n                    <div class="cssTable">\n                        <div class="cssTableColumnGroup" id="fixedLeftBodyColumns">\n                            <!-- each col in fixedCols -->\n                        </div>\n                        <div class="cssTableRowGroup" id="fixedLeftBodyRows">\n                            <!-- each row in rows -->\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class="cssTableCell">\n                <!-- scroll body -->\n                <div class="cssScrollContainer" id="scrollBodyContainer" style="float:left;">\n                    <div class="cssTable" id="scrollBodyTable">\n                        <div class="cssTableColumnGroup" id="scrollBodyColumns">\n                            <!-- each col in scrollCols -->\n                        </div>\n                        <div class="cssTableRowGroup" id="scrollBodyRows">\n                            <!-- each row in rows -->\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class="cssTableCell" ng-show="numberOfColumnsFixedRight > 0">\n                <!-- fixed body -->\n                <div class="cssFixedContainer" id="fixedRightBodyContainer">\n                    <div class="cssTable">\n                        <div class="cssTableColumnGroup" id="fixedRightBodyColumns">\n                            <!-- each col in fixedCols -->\n                        </div>\n                        <div class="cssTableRowGroup" id="fixedRightBodyRows">\n                            <!-- each row in rows -->\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class="cssTableCell">\n                <div ui-scrollbar ui-scrollbar-options="vScrollbarOptions" style="width:16px;">\n                </div>\n            </div>\n        </div>\n        <div class="cssTableRow">\n            <div class="cssTableCell" ng-show="numberOfColumnsFixedLeft > 0">\n            </div>\n            <div class="cssTableCell">\n                <div ui-scrollbar ui-scrollbar-options="hScrollbarOptions" style="height:16px;">\n                </div>\n            </div>\n            <div class="cssTableCell" ng-show="numberOfColumnsFixedRight > 0">\n            </div>\n            <div class="cssTableCell">\n            </div>\n        </div>\n    </div>\n</div>',
+                    template: "<div class=\"cssTable cssMeasure\"><div class=cssTableColumnGroup id=measureHeadColumns></div><div class=cssTableRowGroup id=measureHeadCells></div></div><div class=\"cssTable cssMeasure\"><div class=cssTableColumnGroup id=measureBodyColumns></div><div class=cssTableRowGroup id=measureBodyRows></div></div><div class=cssTable msd-wheel=\"onMouseWheel($event, $delta, $deltaX, $deltaY)\"><div class=cssTableRowGroup><div class=cssTableRow id=headRow><div class=cssTableCell ng-show=\"numberOfColumnsFixedLeft > 0\"><div class=cssTable><div class=cssTableColumnGroup id=fixedLeftHeadColumns></div><div class=cssTableRowGroup><div class=cssTableRow id=fixedLeftHeadCells></div></div></div></div><div class=cssTableCell><div class=cssScrollContainer id=scrollHeadContainer><div class=cssTable id=scrollHeadTable><div class=cssTableColumnGroup id=scrollHeadColumns></div><div class=cssTableRowGroup><div class=cssTableRow id=scrollHeadCells></div></div></div></div></div><div class=cssTableCell ng-show=\"numberOfColumnsFixedRight > 0\"><div class=cssTable><div class=cssTableColumnGroup id=fixedRightHeadColumns></div><div class=cssTableRowGroup><div class=cssTableRow id=fixedRightHeadCells></div></div></div></div><div class=cssTableCell></div></div><div class=cssTableRow><div class=cssTableCell ng-show=\"numberOfColumnsFixedLeft > 0\"><div class=cssFixedContainer id=fixedLeftBodyContainer><div class=cssTable><div class=cssTableColumnGroup id=fixedLeftBodyColumns></div><div class=cssTableRowGroup id=fixedLeftBodyRows></div></div></div></div><div class=cssTableCell><div class=cssScrollContainer id=scrollBodyContainer style=float:left><div class=cssTable id=scrollBodyTable><div class=cssTableColumnGroup id=scrollBodyColumns></div><div class=cssTableRowGroup id=scrollBodyRows></div></div></div></div><div class=cssTableCell ng-show=\"numberOfColumnsFixedRight > 0\"><div class=cssFixedContainer id=fixedRightBodyContainer><div class=cssTable><div class=cssTableColumnGroup id=fixedRightBodyColumns></div><div class=cssTableRowGroup id=fixedRightBodyRows></div></div></div></div><div class=cssTableCell id=verticalScrollContainer><div ui-scrollbar=\"\" ui-scrollbar-options=vScrollbarOptions class=vScrollbarWidth></div></div></div><div class=cssTableRow id=horizontalScrollContainer><div class=cssTableCell ng-show=\"numberOfColumnsFixedLeft > 0\"></div><div class=cssTableCell><div ui-scrollbar=\"\" ui-scrollbar-options=hScrollbarOptions class=hScrollbarHeight></div></div><div class=cssTableCell ng-show=\"numberOfColumnsFixedRight > 0\"></div><div class=cssTableCell></div></div></div></div>",
                     compile: function compile(templateElement, templateAttributes, transclude) {
                         return {
                             pre: function (scope, linkElement, attributes, controller) {
@@ -706,6 +712,8 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                                 scope.scrollBodyContainer = $('#scrollBodyContainer', linkElement);
                                 scope.scrollHeadTable = $('#scrollHeadTable', linkElement);
                                 scope.scrollBodyTable = $('#scrollBodyTable', linkElement);
+                                scope.horizontalScrollContainer = $('#horizontalScrollContainer', linkElement);
+                                scope.verticalScrollContainer = $('#verticalScrollContainer', linkElement);
                                 /*
                                  linkElement.mousewheel(function (event, delta, deltaX, deltaY) {
                                  var newPos = scope.vScrollbarOptions.position - delta;
@@ -838,7 +846,7 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                                 });
                                 linkElement.bind('mousedown.uiTable', function (e) {
                                     var pageX = e.pageX;
-                                    var currentTotalTableWidth = scope.linkElement.width() - 16;
+                                    var currentTotalTableWidth = scope.linkElement.width() - scope.verticalScrollContainer.width();
                                     var currentTotalColumnWidth = 0;
                                     var lastScrollColumnScope = null;
                                     var lastScrollColumnIndex = null;
@@ -1080,7 +1088,13 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                                 var update = function () {
                                     var range = scope.uiScrollbarOptions.fullRange ? scope.uiScrollbarOptions.page - 1 : 0;
                                     if (scope.uiScrollbarOptions.vertical === true) {
-                                        outer.css({height: scope.uiScrollbarOptions.size});
+                                        outer.css
+                                        (
+                                            {
+                                                height: scope.uiScrollbarOptions.size,
+                                                display: scope.uiScrollbarOptions.page === scope.uiScrollbarOptions.total ? 'none' : ''
+                                            }
+                                        );
                                         inner.css
                                         (
                                             {
@@ -1092,14 +1106,21 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                                         );
                                     }
                                     else {
-                                        outer.css({width: scope.uiScrollbarOptions.size});
+                                        var innerWidth = Math.floor(scope.uiScrollbarOptions.size * scope.uiScrollbarOptions.page / (scope.uiScrollbarOptions.total + range));
+                                        outer.css
+                                        (
+                                            {
+                                                width: scope.uiScrollbarOptions.size,
+                                                display: innerWidth > scope.uiScrollbarOptions.size ? 'none' : ''
+                                            }
+                                        );
                                         inner.css
                                         (
                                             {
                                                 top: 0,
                                                 left: Math.ceil(scope.uiScrollbarOptions.size * scope.uiScrollbarOptions.position / (scope.uiScrollbarOptions.total + range)),
                                                 height: outer.height(),
-                                                width: Math.floor(scope.uiScrollbarOptions.size * scope.uiScrollbarOptions.page / (scope.uiScrollbarOptions.total + range))
+                                                width: innerWidth
                                             }
                                         );
                                     }
