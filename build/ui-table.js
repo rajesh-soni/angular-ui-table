@@ -108,7 +108,7 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                         // Create the column definition html.
                         var columnHtml = '<div class="cssTableColumn" style="width:' + columnScope.width + 'px;"></div>';
                         // Get the column template.
-                        var headTemplate = (columnScope.column.headTemplate && columnScope.column.headTemplate.length > 0) ? columnScope.column.headTemplate : '<span ng-bind="column.title"></span>\n<span class="cssTableColumnSort">\n    <i ui-if="column.sort == \'asc\'" class="icon-sort-up"></i>\n    <i ui-if="column.sort == \'desc\'" class="icon-sort-down"></i>\n    <span ui-if="column.sortOrder > 0" ng-bind="column.sortOrder"\n          style="font-size: x-small; vertical-align: top;"></span>\n</span>\n<span class="cssTableColumnTools"></span>\n<div ui-table-column-resize class="cssTableColumnResize"></div>';
+                        var headTemplate = (columnScope.column.headTemplate && columnScope.column.headTemplate.length > 0) ? columnScope.column.headTemplate : '<span ng-bind="column.title" title="{{column.title}}"></span>\n<span class="cssTableColumnSort">\n    <i ui-if="column.sort == \'asc\'" class="icon-sort-up"></i>\n    <i ui-if="column.sort == \'desc\'" class="icon-sort-down"></i>\n    <span ui-if="column.sortOrder > 0" ng-bind="column.sortOrder"\n          style="font-size: x-small; vertical-align: top;"></span>\n</span>\n<span class="cssTableColumnTools"></span>\n<div ui-table-column-resize class="cssTableColumnResize"></div>';
                         // Create the column cell html.
                         var cellHtml = '<div class="cssTableCell"><div class="cssTableCellContent" style="width:' + columnScope.width + 'px;">' + headTemplate + '</div></div>';
                         // Create the elements.
@@ -306,7 +306,7 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                     var scrollRowHtml = '<div class="cssTableRow' + (isSelected ? ' selected">' : '">');
                     $.each($scope.columnScopes, function (index, columnScope) {
                         // Get the data template.
-                        var dataTemplate = (columnScope.column.dataTemplate && columnScope.column.dataTemplate.length > 0) ? columnScope.column.dataTemplate : '<span ng-bind="row.data.' + columnScope.column.field + '"></span>';
+                        var dataTemplate = (columnScope.column.dataTemplate && columnScope.column.dataTemplate.length > 0) ? columnScope.column.dataTemplate : '<span ng-bind="row.data.' + columnScope.column.field + '" title="{{row.data.' + columnScope.column.field + '}}"></span>';
                         // Apply the row data immediately in unbound mode.
                         if ($scope.uiTableOptions.noCellBinding) {
                             dataTemplate = dataTemplate.replace('{{' + columnScope.column.field + '}}', rowData[columnScope.column.field]);
@@ -741,6 +741,8 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                                         else {
                                             scope.vScrollbarOptions.total = scope.uiTableOptions.total;
                                         }
+                                        controller.updateColumns();
+                                        controller.renderRow();
                                     });
                                     scope.$watch('uiTableOptions.total', function (newValue) {
                                         if (!$.isArray(scope.uiTableOptions.data)) {
@@ -750,6 +752,7 @@ angular.module('uiTable', ['monospaced.mousewheel'])
                                     controller.updateColumns();
                                     controller.updateLayout();
                                 });
+                                scope.$on("resized", controller.updateLayout);
                                 scope.$watch
                                 (
                                     function () {

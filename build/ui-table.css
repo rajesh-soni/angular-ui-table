@@ -4,6 +4,11 @@
  * These are required to make uiTable work.
  */
 
+.ui-table {
+  border: 1px solid #ddd;
+  background : #f9f9f9;
+}
+
 .cssMeasure {
   position: absolute;
   top: -10000px;
@@ -49,14 +54,24 @@
 
 .cssTableCellContent {
   position: relative;
-  padding: 2px;
+  padding: 7px;
   overflow: hidden;
-  border-right: 1px solid gray;
-  border-bottom: 1px solid gray;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
 }
+ .cssTableCellContent span{ 
+        text-overflow: ellipsis;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        float: left;
+  }
+  .cssTableCellContent span:hover{ 
+        cursor: pointer;
+  }
 
 .cssTableColumnResize {
   position: absolute;
@@ -81,6 +96,7 @@
 }
 
 /* dynamic class instead of # */
+#headRow .cssScrollContainer, #headRow .cssTableCellContent{border-bottom:none;}
 
 #scrollHeadCells .cssTableCell:last-child > .cssTableCellContent {
   border-right: 0px !important;
@@ -113,7 +129,7 @@
 }
 
 .cssTableRow:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #f9f9f9;
 }
 
 .uiScrollbarOuter {
@@ -127,12 +143,12 @@
 }
 
 #headRow {
-  background-color: #6e6e6e;
+  background-color: #c8c7c7;
 }
 
 #headRow .cssTableCell {
-  font-weight: 700;
-  color: #fff;
+  font-weight: bold;
+  color: #424242;
 }
 
 #headRow .cssTableRow {
@@ -140,7 +156,6 @@
 }
 
 #headRow .cssTableCellContent {
-  text-align: center;
   cursor: pointer;
   height: 30px;
 }
@@ -171,9 +186,9 @@
 }
 
 .hScrollbarHeight {
-  height: 12px;
+  height: 8px;
 }
 
 .vScrollbarWidth {
-  width: 12px;
+  width: 8px;
 }
